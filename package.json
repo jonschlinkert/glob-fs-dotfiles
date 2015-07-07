@@ -1,7 +1,7 @@
 {
   "name": "glob-fs-dotfiles",
-  "description": "glob-fs middleware for automatically ignoring files defined in `.gitignore`",
-  "version": "0.1.0",
+  "description": "glob-fs middleware for automatically ignoring dotfiles.",
+  "version": "0.1.2",
   "homepage": "https://github.com/jonschlinkert/glob-fs-dotfiles",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "jonschlinkert/glob-fs-dotfiles",
