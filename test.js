@@ -1,42 +1,81 @@
-/*!
- * glob-fs-dotfiles <https://github.com/jonschlinkert/glob-fs-dotfiles>
- *
- * Copyright (c) 2015 .
- * Licensed under the MIT license.
- */
-
 'use strict';
 
-/* deps:mocha */
+/* deps: mocha */
 var assert = require('assert');
-var should = require('should');
 var glob = require('glob-fs');
 var dotfiles = require('./');
+
+function has(files, fp) {
+  return files.indexOf(fp) !== -1;
+}
 
 describe('dotfiles', function () {
   it('should not glob dotfiles by default:', function (done) {
     glob()
       .use(dotfiles())
       .readdir('*', function (err, files) {
-        assert.equal(files.indexOf('LICENSE') !== -1, true);
-        assert.equal(files.indexOf('package.json') !== -1, true);
-        assert.equal(files.indexOf('.gitignore') !== -1, false);
+        assert.equal(has(files, 'LICENSE'), true);
+        assert.equal(has(files, 'package.json'), true);
+        assert.equal(has(files, '.gitignore'), false);
         done();
       });
   });
 
-  it('should glob dotfiles when `dotfiles` true is passed to `glob`:', function (done) {
+  it('should use options passed to `glob`:', function (done) {
+    glob({ dot: true })
+      .use(dotfiles())
+      .readdir('*', function (err, files) {
+        assert.equal(has(files, '.git'), true);
+        assert.equal(has(files, '.gitignore'), true);
+        done();
+      });
+  });
+
+  it('should use options passed to the middleware:', function (done) {
+    glob()
+      .use(dotfiles({ dot: true }))
+      .readdir('*', function (err, files) {
+        assert.equal(has(files, '.git'), true);
+        assert.equal(has(files, '.gitignore'), true);
+        done();
+      });
+  });
+
+  it('should glob dotfiles when `dotfiles` true is passed to glob:', function (done) {
     glob({ dotfiles: true })
       .use(dotfiles())
       .readdir('*', function (err, files) {
-        assert.equal(files.indexOf('.gitignore') !== -1, true);
+        // dotfiles => true
+        assert.equal(has(files, '.gitignore'), true);
         done();
       });
   });
 
-  // it('should throw an error:', function () {
-  //   (function () {
-  //     dotfiles();
-  //   }).should.throw('dotfiles expects valid arguments');
-  // });
+  it('should glob dotfiles when `dotfiles` true is passed:', function (done) {
+    glob()
+      .use(dotfiles({ dotfiles: true }))
+      .readdir('*', function (err, files) {
+        // dotfiles => true
+        assert.equal(has(files, '.gitignore'), true);
+        done();
+      });
+  });
+
+  it('should glob dotdirs when `dotdirs` true is passed to glob:', function (done) {
+    glob({ dotdirs: true })
+      .use(dotfiles())
+      .readdir('*', function (err, files) {
+        assert.equal(has(files, '.git'), false);
+        done();
+      });
+  });
+
+  it('should glob dotdirs when `dotdirs` true is passed:', function (done) {
+    glob()
+      .use(dotfiles({ dotdirs: true }))
+      .readdir('*', function (err, files) {
+        assert.equal(has(files, '.git'), false);
+        done();
+      });
+  });
 });
