@@ -1,10 +1,3 @@
-/*!
- * glob-fs-dotfiles <https://github.com/jonschlinkert/glob-fs-dotfiles>
- *
- * Copyright (c) 2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
 'use strict';
 
 var extend = require('extend-shallow');
@@ -15,20 +8,35 @@ module.exports = function (options) {
   var config;
 
   return function dotfiles(file, opts) {
-    var opts = config || (config = extend({}, this.options, options));
-    if (opts.dot === true || opts.dotfiles) {
+    // cache options from middleware and glob
+    if (typeof config === 'undefined') {
+      config = extend({}, opts, options);
+    }
+
+    // extend file options with
+    opts = extend({}, config, opts);
+    var isDot = isDotfile(file.path);
+    var isDir = isDotdir(file.path);
+
+    // both dotfiles and dotdirs
+    if (opts.dot === true && (isDot || isDir)) {
+      file.include = true;
       return file;
     }
 
-    if (isDotdir(file.path)) {
-      if (opts.dotdir === true) {
+    // dotdirs only
+    if (isDir && file.isDir === true) {
+      if (opts.dotdirs === true) {
+        file.include = true;
         return file;
       }
       file.exclude = true;
     }
 
-    if (isDotfile(file.path)) {
-      if (opts.dotfile === true || opts.dotdir === true) {
+    // dotfiles only
+    if (isDot && file.isDir === false) {
+      if (opts.dotfiles === true) {
+        file.include = true;
         return file;
       }
       file.exclude = true;
