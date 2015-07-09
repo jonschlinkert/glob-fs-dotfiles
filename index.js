@@ -13,34 +13,32 @@ module.exports = function (options) {
       config = extend({}, opts, options);
     }
 
-    // extend file options with
+    // extend file options with config
     opts = extend({}, config, opts);
-    var isDot = isDotfile(file.path);
-    var isDir = isDotdir(file.path);
 
-    // both dotfiles and dotdirs
-    if (opts.dot === true && (isDot || isDir)) {
+    if (file.pattern.glob.charAt(0) === '.') {
+      opts.dot = true;
+    }
+
+    file.isDotfile = isDotfile(file.path);
+    file.isDotdir = isDotdir(file.path);
+
+    // dotfiles
+    if (file.isDotfile && (opts.dot === true || opts.dotfiles === true)) {
       file.include = true;
       return file;
     }
 
-    // dotdirs only
-    if (isDir && file.isDir === true) {
-      if (opts.dotdirs === true) {
-        file.include = true;
-        return file;
-      }
+    // dotdirs
+    if (file.isDotdir && (opts.dot === true || opts.dotdirs === true)) {
+      file.include = true;
+      return file;
+    }
+
+    if ((file.isDotdir || file.isDotfile) && file.include !== true) {
       file.exclude = true;
     }
 
-    // dotfiles only
-    if (isDot && file.isDir === false) {
-      if (opts.dotfiles === true) {
-        file.include = true;
-        return file;
-      }
-      file.exclude = true;
-    }
     return file;
   };
 };
