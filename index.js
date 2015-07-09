@@ -4,18 +4,10 @@ var extend = require('extend-shallow');
 var isDotfile = require('is-dotfile');
 var isDotdir = require('is-dotdir');
 
-module.exports = function (options) {
-  var config;
+module.exports = function (opts) {
+  opts = opts || {};
 
-  return function dotfiles(file, opts) {
-    // cache options from middleware and glob
-    if (typeof config === 'undefined') {
-      config = extend({}, opts, options);
-    }
-
-    // extend file options with config
-    opts = extend({}, config, opts);
-
+  return function dotfiles(file) {
     if (file.pattern.glob.charAt(0) === '.') {
       opts.dot = true;
     }
@@ -38,7 +30,6 @@ module.exports = function (options) {
     if ((file.isDotdir || file.isDotfile) && file.include !== true) {
       file.exclude = true;
     }
-
     return file;
   };
 };
