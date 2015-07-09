@@ -8,6 +8,8 @@ module.exports = function (opts) {
   opts = opts || {};
 
   return function dotfiles(file) {
+    opts = extend({}, this.options, this.pattern.options, opts);
+
     if (file.pattern.glob.charAt(0) === '.') {
       opts.dot = true;
     }
