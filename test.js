@@ -14,8 +14,13 @@ describe('dotfiles', function () {
   beforeEach(function () {
     glob = new Glob({gitignore: false});
 
+    glob.on('include', function (file) {
+      // console.log(file.relative);
+    });
+
     glob.on('exclude', function (file) {
-      // console.log(file.path);
+      // console.log('dotfile:', file.isDotfile());
+      // console.log('dotdir:', file.isDotdir());
     });
   });
 
@@ -25,6 +30,7 @@ describe('dotfiles', function () {
         assert.equal(has(files, 'LICENSE'), true);
         assert.equal(has(files, 'package.json'), true);
         assert.equal(has(files, '.gitignore'), false);
+        assert.equal(has(files, '.git'), false);
         done();
       });
   });
@@ -45,14 +51,14 @@ describe('dotfiles', function () {
         assert.equal(has(files, '.git'), true);
         assert.equal(has(files, '.gitignore'), true);
 
-
-      glob = new Glob()
-      glob.use(dotfiles({ dot: false, dotfiles: false }))
-        .readdir('*', function (err, files) {
-          assert.equal(has(files, '.git'), false);
-          assert.equal(has(files, '.gitignore'), false);
-          done();
-        });
+        // reverse the test, ensure options are updated correctly
+        glob = new Glob()
+        glob.use(dotfiles({ dot: false, dotfiles: false }))
+          .readdir('*', function (err, files) {
+            assert.equal(has(files, '.git'), false);
+            assert.equal(has(files, '.gitignore'), false);
+            done();
+          });
      });
   });
 
@@ -62,6 +68,8 @@ describe('dotfiles', function () {
       .readdir('*', function (err, files) {
         // dotfiles => true
         assert.equal(has(files, '.gitignore'), true);
+        // but not dotdirs
+        assert.equal(has(files, '.git'), false);
         done();
       });
   });
@@ -71,6 +79,8 @@ describe('dotfiles', function () {
       .readdir('*', function (err, files) {
         // dotfiles => true
         assert.equal(has(files, '.gitignore'), true);
+        // but not dotdirs
+        assert.equal(has(files, '.git'), false);
         done();
       });
   });
@@ -79,16 +89,21 @@ describe('dotfiles', function () {
     glob = new Glob({ dotdirs: true })
     glob.use(dotfiles())
       .readdir('*', function (err, files) {
-        assert.equal(has(files, '.git'), false);
+        // dotdirs => true
+        assert.equal(has(files, '.git'), true);
+        // but not dotfiles
+        assert.equal(has(files, '.gitignore'), false);
         done();
       });
   });
 
-  it('should glob dotdirs when `dotdirs` true is passed:', function (done) {
-    glob = new Glob()
+  it('should glob dotdirs when `dotdirs` true is passed to the middleware:', function (done) {
     glob.use(dotfiles({ dotdirs: true }))
       .readdir('*', function (err, files) {
-        assert.equal(has(files, '.git'), false);
+        // dotdirs => true
+        assert.equal(has(files, '.git'), true);
+        // but not dotfiles
+        assert.equal(has(files, '.gitignore'), false);
         done();
       });
   });
