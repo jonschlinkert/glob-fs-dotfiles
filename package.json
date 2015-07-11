@@ -1,7 +1,7 @@
 {
   "name": "glob-fs-dotfiles",
   "description": "glob-fs middleware for automatically ignoring dotfiles.",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "homepage": "https://github.com/jonschlinkert/glob-fs-dotfiles",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "jonschlinkert/glob-fs-dotfiles",
@@ -18,11 +18,6 @@
   },
   "scripts": {
     "test": "mocha"
-  },
-  "dependencies": {
-    "extend-shallow": "^2.0.0",
-    "is-dotdir": "^0.1.0",
-    "is-dotfile": "^1.0.1"
   },
   "devDependencies": {
     "glob-fs": "^0.1.0",
@@ -44,7 +39,12 @@
   ],
   "verb": {
     "related": {
-      "list": ["glob-fs", "glob-fs-gitignore", "micromatch", "is-glob"]
+      "list": [
+        "glob-fs",
+        "glob-fs-gitignore",
+        "micromatch",
+        "is-glob"
+      ]
     }
   }
 }
