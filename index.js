@@ -10,8 +10,8 @@ module.exports = function (opts) {
       opts.dot = true;
     }
 
-    var isDotfile = file.isDotfile() && file.relative !== '.git';
-    var isDotdir = file.isDotdir() || file.relative === '.git';
+    var isDotfile = file.isDotfile(file.basename) && file.relative !== '.git';
+    var isDotdir = file.isDotdir(file.basename) || file.relative === '.git';
 
     // dotfiles
     if (isDotfile && (opts.dot === true || opts.dotfiles === true)) {
